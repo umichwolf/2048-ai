@@ -1,6 +1,7 @@
 #include <stdlib.h>
+#include <fstream>
 #include "platdefs.h"
-
+using namespace std;
 /* The fundamental trick: the 4x4 board is represented as a 64-bit word,
  * with each board square packed into a single 4-bit nibble.
  * 
@@ -36,6 +37,31 @@ static inline void print_board(board_t board) {
     }
     printf("\n");
 }
+/*
+static inline void print_board_file(board_t board,int move,ofstream fout) {
+    int i,j;
+    int ret;
+    for(i=0; i<16; i++) {
+        uint8_t powerVal = (board) & 0xf;
+        if (powerVal == 0)
+            ret = 0;
+        else
+            ret = 1<< powerVal;
+        fout<< ret;
+        if(move == 0)
+            fout<<"w";
+        if(move == 1)
+            fout<<"s";
+        if(move == 2)
+            fout<<"a";
+        if(move == 3)
+            fout<<"d";
+        board >>= 4;
+    }
+    printf("\n");
+}
+*/
+
 
 static inline board_t unpack_col(row_t row) {
     board_t tmp = row;

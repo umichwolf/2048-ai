@@ -6,6 +6,9 @@
 #include <string.h>
 #include <time.h>
 #include <algorithm>
+#include <fstream>
+#include <iomanip>
+using namespace std;
 
 #include "2048.h"
 
@@ -406,7 +409,7 @@ float score_toplevel_move(board_t board, int move) {
 }
 
 /* Find the best move for a given board. */
-int find_best_move(board_t board) {
+int find_best_move(board_t board,ofstream &fout) {
     int move;
     float best = 0;
     int bestmove = -1;
@@ -422,6 +425,26 @@ int find_best_move(board_t board) {
             bestmove = move;
         }
     }
+    int i;
+    int ret;
+    for(i=0; i<16; i++) {
+        uint8_t powerVal = (board) & 0xf;
+        if (powerVal == 0)
+            ret = 0;
+        else
+            ret = 1<< powerVal;
+        fout<<setw(6)<<ret;
+       board >>= 4;
+    }
+        if(bestmove == 0)
+            fout<<setw(6)<<"w";
+        if(bestmove == 1)
+            fout<<setw(6)<<"s";
+        if(bestmove == 2)
+            fout<<setw(6)<<"a";
+        if(bestmove == 3)
+            fout<<setw(6)<<"d";
+    fout<<endl;
 
     return bestmove;
 }
@@ -485,12 +508,13 @@ static board_t initial_board() {
     return insert_tile_rand(board, draw_tile());
 }
 
-void play_game(get_move_func_t get_move) {
+void play_game(ofstream &fout,int steps) {
     board_t board = initial_board();
     int moveno = 0;
     int scorepenalty = 0; // "penalty" for obtaining free 4 tiles
+    int i;
 
-    while(1) {
+    for(i=0;i<steps;i++) {
         int move;
         board_t newboard;
 
@@ -503,7 +527,7 @@ void play_game(get_move_func_t get_move) {
 
         printf("\nMove #%d, current score=%.0f\n", ++moveno, score_board(board) - scorepenalty);
 
-        move = get_move(board);
+        move = find_best_move(board,fout);
         if(move < 0)
             break;
 
@@ -524,6 +548,15 @@ void play_game(get_move_func_t get_move) {
 }
 
 int main() {
-    init_tables();
-    play_game(find_best_move);
+    int iter = 13;
+    int steps = 1500;
+    ofstream fout;
+    fout.open("data_train.txt",ios::out|ios::ate);
+    int i;
+    for(i=0;i<iter;i++){
+        init_tables();
+        play_game(fout,steps);
+    }
+   
+
 }
