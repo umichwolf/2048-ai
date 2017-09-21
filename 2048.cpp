@@ -548,8 +548,8 @@ void play_game(int iter,ofstream &fout,int steps) {
 }
 
 int main() {
-    int iter = 1000;
-    int steps = 100;
+    int iter = 170;
+    int steps = 1100;
     ofstream fout;
     fout.open("data_train.txt",ios::out|ios::ate);
     int i;
