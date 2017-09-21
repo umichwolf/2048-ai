@@ -508,7 +508,7 @@ static board_t initial_board() {
     return insert_tile_rand(board, draw_tile());
 }
 
-void play_game(ofstream &fout,int steps) {
+void play_game(int iter,ofstream &fout,int steps) {
     board_t board = initial_board();
     int moveno = 0;
     int scorepenalty = 0; // "penalty" for obtaining free 4 tiles
@@ -525,7 +525,7 @@ void play_game(ofstream &fout,int steps) {
         if(move == 4)
             break; // no legal moves
 
-        printf("\nMove #%d, current score=%.0f\n", ++moveno, score_board(board) - scorepenalty);
+        printf("\nMove #%d in game %d, current score=%.0f\n", ++moveno,iter, score_board(board) - scorepenalty);
 
         move = find_best_move(board,fout);
         if(move < 0)
@@ -548,14 +548,14 @@ void play_game(ofstream &fout,int steps) {
 }
 
 int main() {
-    int iter = 13;
-    int steps = 1500;
+    int iter = 1000;
+    int steps = 100;
     ofstream fout;
     fout.open("data_train.txt",ios::out|ios::ate);
     int i;
     for(i=0;i<iter;i++){
         init_tables();
-        play_game(fout,steps);
+        play_game(i,fout,steps);
     }
    
 
